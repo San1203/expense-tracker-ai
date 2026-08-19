@@ -1,36 +1,67 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Expense Tracker
+
+A personal expense tracker built with Next.js and TypeScript. Log expenses, browse them with search/filter/date-range controls, see spending trends on charts, and export your data — all running entirely client-side, with no backend or database.
+
+## Features
+
+- **Expense CRUD** — add, edit, and delete expenses with date, amount, category, and description
+- **Search & filters** — filter the expense list by description, category, and date range
+- **Dashboard summary** — total spending, this month's spending, top category, and average expense per transaction
+- **Spending charts** — category breakdown (donut chart) and a 6-month spending trend (bar chart), via Recharts
+- **Local persistence** — expenses are saved to the browser's `localStorage`, so data survives refreshes and restarts (per-browser, no sync across devices)
+- **Toast notifications & confirm dialogs** for add/edit/delete actions
+- **Advanced export drawer** — a right-side panel for getting expense data out of the app:
+  - **Formats**: CSV, JSON, or a formatted PDF report (branded header, table, page numbers)
+  - **Filters**: independent date range and multi-select category filters, scoped to the export only (doesn't affect the main list)
+  - **Live preview**: a sample of the rows that will be exported, plus a running record count and total
+  - **Custom filename**, with the extension kept in sync with the selected format
+  - **Staged loading state**: preparing → generating, with a progress spinner on the export button
+
+## Tech Stack
+
+- **Framework**: [Next.js 14](https://nextjs.org/) (App Router)
+- **Language**: TypeScript
+- **UI**: React 18, [Tailwind CSS](https://tailwindcss.com/)
+- **Icons**: [lucide-react](https://lucide.dev/)
+- **Charts**: [Recharts](https://recharts.org/)
+- **PDF generation**: [jsPDF](https://github.com/parallax/jsPDF) + [jspdf-autotable](https://github.com/simonbengtsson/jsPDF-AutoTable)
+- **Persistence**: browser `localStorage` — no backend, no database
+- **Linting**: ESLint (`eslint-config-next`)
 
 ## Getting Started
 
-First, run the development server:
-
 ```bash
+npm install
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Open [http://localhost:3000](http://localhost:3000) in your browser.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+### Available scripts
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+| Command         | Description                          |
+| --------------- | ------------------------------------ |
+| `npm run dev`   | Start the dev server with hot reload |
+| `npm run build` | Production build                     |
+| `npm run start` | Serve the production build           |
+| `npm run lint`  | Run ESLint                           |
 
-## Learn More
+## Project Structure
 
-To learn more about Next.js, take a look at the following resources:
+```
+src/
+  app/                 # Next.js App Router entry (layout, page, global styles)
+  components/           # UI components
+    export/              # Export drawer: format picker, category picker, preview table
+  hooks/                  # useExpenses (CRUD + persistence), useExpenseExport (drawer state)
+  lib/
+    export/                # Export engine: format metadata, filtering, CSV/JSON/PDF writers, orchestrator
+    categories.ts           # Category definitions, icons, colors
+    storage.ts                # localStorage read/write for expenses
+    types.ts                   # Shared Expense/Category types
+    utils.ts                    # Formatting & id helpers
+```
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+## Notes
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+This project has no server or database — all state lives in the browser's `localStorage`, scoped to the current browser/device.

@@ -1,5 +1,3 @@
-import { Expense } from "./types";
-
 export function formatCurrency(amount: number): string {
   return new Intl.NumberFormat("en-US", {
     style: "currency",
@@ -28,24 +26,4 @@ export function generateId(): string {
     return crypto.randomUUID();
   }
   return `${Date.now()}-${Math.random().toString(36).slice(2, 10)}`;
-}
-
-export function exportExpensesToCSV(expenses: Expense[]): void {
-  const header = ["Date", "Category", "Description", "Amount"];
-  const rows = expenses.map((e) => [
-    e.date,
-    e.category,
-    `"${e.description.replace(/"/g, '""')}"`,
-    e.amount.toFixed(2),
-  ]);
-  const csv = [header, ...rows].map((row) => row.join(",")).join("\n");
-  const blob = new Blob([csv], { type: "text/csv;charset=utf-8;" });
-  const url = URL.createObjectURL(blob);
-  const link = document.createElement("a");
-  link.href = url;
-  link.download = `expenses-${todayISO()}.csv`;
-  document.body.appendChild(link);
-  link.click();
-  document.body.removeChild(link);
-  URL.revokeObjectURL(url);
 }

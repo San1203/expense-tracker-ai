@@ -9,9 +9,10 @@ import ExpenseList from "@/components/ExpenseList";
 import ExpenseModal from "@/components/ExpenseModal";
 import ConfirmDialog from "@/components/ConfirmDialog";
 import ToastContainer, { ToastItem, ToastType } from "@/components/ToastContainer";
+import CloudExportStudio from "@/components/cloud-export/CloudExportStudio";
 import { useExpenses } from "@/hooks/useExpenses";
 import { Expense, ExpenseInput } from "@/lib/types";
-import { generateId, exportExpensesToCSV } from "@/lib/utils";
+import { generateId } from "@/lib/utils";
 
 const EMPTY_FILTERS: Filters = { search: "", category: "All", startDate: "", endDate: "" };
 
@@ -21,6 +22,7 @@ export default function Home() {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [editingExpense, setEditingExpense] = useState<Expense | null>(null);
   const [deletingExpense, setDeletingExpense] = useState<Expense | null>(null);
+  const [isExportStudioOpen, setIsExportStudioOpen] = useState(false);
   const [toasts, setToasts] = useState<ToastItem[]>([]);
 
   function pushToast(type: ToastType, message: string) {
@@ -72,15 +74,9 @@ export default function Home() {
     setDeletingExpense(null);
   }
 
-  function handleExport() {
-    if (filteredExpenses.length === 0) return;
-    exportExpensesToCSV(filteredExpenses);
-    pushToast("info", `Exported ${filteredExpenses.length} expense${filteredExpenses.length === 1 ? "" : "s"} to CSV.`);
-  }
-
   return (
     <div className="min-h-screen bg-slate-50">
-      <Header onAddExpense={handleAddClick} />
+      <Header onAddExpense={handleAddClick} onOpenExportStudio={() => setIsExportStudioOpen(true)} />
 
       <main className="mx-auto max-w-6xl space-y-6 px-4 py-6 sm:px-6">
         {!isLoaded ? (
@@ -89,12 +85,7 @@ export default function Home() {
           <>
             <SummaryCards expenses={expenses} />
             <SpendingCharts expenses={expenses} />
-            <ExpenseFilters
-              filters={filters}
-              onChange={setFilters}
-              onExport={handleExport}
-              resultCount={filteredExpenses.length}
-            />
+            <ExpenseFilters filters={filters} onChange={setFilters} />
             <ExpenseList
               expenses={filteredExpenses}
               totalCount={expenses.length}
@@ -124,6 +115,8 @@ export default function Home() {
       />
 
       <ToastContainer toasts={toasts} onDismiss={dismissToast} />
+
+      <CloudExportStudio isOpen={isExportStudioOpen} onClose={() => setIsExportStudioOpen(false)} expenses={expenses} />
     </div>
   );
 }

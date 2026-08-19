@@ -1,6 +1,6 @@
 "use client";
 
-import { Search, Download, X } from "lucide-react";
+import { Search, X } from "lucide-react";
 import { CATEGORIES } from "@/lib/categories";
 import { Category } from "@/lib/types";
 
@@ -14,11 +14,9 @@ export interface Filters {
 interface ExpenseFiltersProps {
   filters: Filters;
   onChange: (filters: Filters) => void;
-  onExport: () => void;
-  resultCount: number;
 }
 
-export default function ExpenseFilters({ filters, onChange, onExport, resultCount }: ExpenseFiltersProps) {
+export default function ExpenseFilters({ filters, onChange }: ExpenseFiltersProps) {
   const hasActiveFilters =
     filters.search !== "" || filters.category !== "All" || filters.startDate !== "" || filters.endDate !== "";
 
@@ -69,25 +67,15 @@ export default function ExpenseFilters({ filters, onChange, onExport, resultCoun
           />
         </div>
 
-        <div className="flex items-center gap-2">
-          {hasActiveFilters && (
-            <button
-              onClick={reset}
-              className="flex items-center gap-1 rounded-lg px-2.5 py-2 text-xs font-medium text-slate-500 hover:bg-slate-100"
-            >
-              <X className="h-3.5 w-3.5" />
-              Clear
-            </button>
-          )}
+        {hasActiveFilters && (
           <button
-            onClick={onExport}
-            disabled={resultCount === 0}
-            className="flex items-center gap-1.5 rounded-lg border border-slate-200 px-3 py-2 text-xs font-medium text-slate-600 transition hover:bg-slate-50 disabled:cursor-not-allowed disabled:opacity-50"
+            onClick={reset}
+            className="flex items-center gap-1 rounded-lg px-2.5 py-2 text-xs font-medium text-slate-500 hover:bg-slate-100"
           >
-            <Download className="h-3.5 w-3.5" />
-            Export CSV
+            <X className="h-3.5 w-3.5" />
+            Clear
           </button>
-        </div>
+        )}
       </div>
     </div>
   );

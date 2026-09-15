@@ -4,6 +4,7 @@ import { useMemo, useState } from "react";
 import Header from "@/components/Header";
 import SummaryCards from "@/components/SummaryCards";
 import SpendingCharts from "@/components/SpendingCharts";
+import MonthlyInsights from "@/components/MonthlyInsights";
 import ExpenseFilters, { Filters } from "@/components/ExpenseFilters";
 import ExpenseList from "@/components/ExpenseList";
 import ExpenseModal from "@/components/ExpenseModal";
@@ -15,8 +16,11 @@ import { generateId, exportExpensesToCSV } from "@/lib/utils";
 
 const EMPTY_FILTERS: Filters = { search: "", category: "All", startDate: "", endDate: "" };
 
+type View = "dashboard" | "insights";
+
 export default function Home() {
   const { expenses, isLoaded, addExpense, updateExpense, deleteExpense } = useExpenses();
+  const [view, setView] = useState<View>("dashboard");
   const [filters, setFilters] = useState<Filters>(EMPTY_FILTERS);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [editingExpense, setEditingExpense] = useState<Expense | null>(null);
@@ -83,8 +87,29 @@ export default function Home() {
       <Header onAddExpense={handleAddClick} />
 
       <main className="mx-auto max-w-6xl space-y-6 px-4 py-6 sm:px-6">
+        <div className="flex w-fit gap-1 rounded-lg border border-slate-200 bg-white p-1 shadow-sm">
+          <button
+            onClick={() => setView("dashboard")}
+            className={`rounded-md px-3.5 py-1.5 text-sm font-medium transition ${
+              view === "dashboard" ? "bg-indigo-600 text-white" : "text-slate-600 hover:bg-slate-100"
+            }`}
+          >
+            Dashboard
+          </button>
+          <button
+            onClick={() => setView("insights")}
+            className={`rounded-md px-3.5 py-1.5 text-sm font-medium transition ${
+              view === "insights" ? "bg-indigo-600 text-white" : "text-slate-600 hover:bg-slate-100"
+            }`}
+          >
+            Monthly Insights
+          </button>
+        </div>
+
         {!isLoaded ? (
           <LoadingState />
+        ) : view === "insights" ? (
+          <MonthlyInsights expenses={expenses} />
         ) : (
           <>
             <SummaryCards expenses={expenses} />
